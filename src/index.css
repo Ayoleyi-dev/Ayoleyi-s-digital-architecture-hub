@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  /* We tell Tailwind: your accent color is exactly what React hands you */
+  --color-accent: var(--dynamic-accent);
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hides the scrollbar for mobile swipe navigation */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
