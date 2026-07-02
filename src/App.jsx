@@ -1,17 +1,44 @@
-import React, { useState } from 'react';
-import { LayoutDashboard, Beaker, Terminal, Calendar, Sun, Moon, User, Mail, Code, Database, Dna, Globe, TrendingUp, Smartphone, ExternalLink, GitBranch, Briefcase, Megaphone, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { LayoutDashboard, Beaker, Terminal, Calendar, Sun, Moon, User, Mail, Code, Database, Dna, Globe, TrendingUp, Smartphone, ExternalLink, GitBranch, Briefcase, Megaphone, MessageCircle, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// --- GITHUB API INTEGRATION HOOK ---
+function useGitHubRepos(username) {
+  const [repos, setRepos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRepos = async () => {
+      try {
+        const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=50`);
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        
+        const activeRepos = data
+          .filter(repo => !repo.fork)
+          .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+          
+        setRepos(activeRepos);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRepos();
+  }, [username]);
+
+  return { repos, loading, error };
+}
 
 // --- HUB COMPONENTS ---
 
 const Profile = () => (
   <div className="space-y-6">
-    {/* NEW ANIMATED HERO SECTION */}
     <div className="relative w-full h-48 md:h-64 rounded-3xl overflow-hidden bg-slate-900 border border-slate-700 mb-6 flex items-center justify-center">
-      {/* Background Grid Pattern */}
       <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
       
-      {/* Animated Elements */}
       <motion.div 
         animate={{ y: [0, -15, 0], rotate: [0, 5, -5, 0] }} 
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -37,10 +64,33 @@ const Profile = () => (
       </div>
     </div>
 
-    {/* EXISTING PROFILE CONTENT */}
     <div className="p-8 bg-slate-200/50 dark:bg-slate-800/50 rounded-3xl border border-slate-300 dark:border-slate-700 backdrop-blur-sm">
-      <h2 className="text-3xl font-bold mb-2">Ayoleyi Gbenga-Ayodeji Marvelous</h2>
-      <p className="text-lg text-[var(--dynamic-accent)] font-bold mb-6 tracking-wide">Bioinformatics Researcher | Certified Data Analyst | Digital Architect</p>
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-2">
+        <h2 className="text-3xl font-bold">Ayoleyi Gbenga-Ayodeji Marvelous</h2>
+        <a 
+          href="/Ayoleyi_Three_Resumes.pdf" 
+          download="Ayoleyi_Gbenga-Ayodeji_Resume.pdf"
+          className="flex-shrink-0 px-6 py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold rounded-xl hover:scale-105 transition-transform flex items-center justify-center gap-2 shadow-lg"
+        >
+          <Download size={18} />
+          Resume PDF
+        </a>
+      </div>
+      
+      <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-6">
+        <span className="text-lg text-[var(--dynamic-accent)] font-bold tracking-wide">
+          Aspiring CADD Researcher
+        </span>
+        <span className="text-slate-400 hidden md:inline">|</span>
+        <span className="text-lg text-slate-600 dark:text-slate-300 font-medium">
+          Certified Data Analyst
+        </span>
+        <span className="text-slate-400 hidden md:inline">|</span>
+        <span className="text-lg text-slate-600 dark:text-slate-300 font-medium">
+          Software Developer
+        </span>
+      </div>
+
       <p className="text-slate-700 dark:text-slate-300 max-w-3xl leading-relaxed text-lg">
         Currently advancing through the 300-level Biochemistry program at UNILAG. I am actively transitioning from data analytics into bioinformatics and Computer-Aided Drug Discovery (CADD), bridging biological sciences with data-driven computational insights.
       </p>
@@ -61,8 +111,8 @@ const Profile = () => (
       
       <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors">
         <Code className="text-[var(--dynamic-accent)] mb-4" size={28} />
-        <h3 className="font-bold text-lg mb-2">Digital Architecture</h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Deployment of modern React frameworks (Vite), vanilla web technologies, Bash scripting, and comprehensive brand identity management via Git/GitHub workflows.</p>
+        <h3 className="font-bold text-lg mb-2">Software Engineering</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Frontend architecture with React, build optimization with Vite, and deployment workflows using Vercel, Bash scripting, and Git/GitHub.</p>
       </div>
     </div>
 
@@ -76,13 +126,17 @@ const Profile = () => (
           <div className="absolute -left-[35px] top-1.5 w-4 h-4 rounded-full bg-[var(--dynamic-accent)] shadow-[0_0_10px_var(--dynamic-accent)]" />
           <h4 className="font-bold text-lg">Assistant Tutor & Community Manager</h4>
           <p className="text-[var(--dynamic-accent)] font-bold text-sm mb-2">ULLSSA Skill Up Programme, UNILAG | May 2026 – Present</p>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Managing a 10-week intensive data analysis track. Responsible for curriculum delivery, student progress tracking, and providing technical mentorship in data analytics software.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Leading a 10-week intensive data analysis track for <strong>45 students</strong>. Teaching Python (Pandas, NumPy), SQL, and Power BI. Achieved <strong>92% completion rate</strong> with students building real-world projects.
+          </p>
         </div>
         <div className="relative">
           <div className="absolute -left-[35px] top-1.5 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700" />
           <h4 className="font-bold text-lg">SIWES Industrial Trainee</h4>
           <p className="text-slate-500 dark:text-slate-400 font-bold text-sm mb-2">NAFDAC | 2025</p>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Completed a 3-month industrial attachment, gaining exposure to regulatory laboratory environments, quality assurance protocols, and operational workflows.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            3-month industrial attachment in the Quality Control Laboratory. Assisted in <strong>200+ pharmaceutical sample analyses</strong> using HPLC and UV-Vis spectrophotometry. Gained hands-on experience with GMP protocols and regulatory compliance.
+          </p>
         </div>
       </div>
     </div>
@@ -91,25 +145,30 @@ const Profile = () => (
 
 const BioLab = () => {
   const [activeCategory, setActiveCategory] = useState('All');
+  const [terminalLines, setTerminalLines] = useState([]);
 
   const categories = ['All', 'AI Homology', 'Chemoinformatics', 'Pharmacoinformatics', 'Novel Discoveries'];
 
   const researchProjects = [
     {
       id: 1,
-      title: 'AI-Driven Homology & Targeted Drug Discovery',
+      title: 'AI-Driven Homology for Targeted Drug Discovery',
       category: 'AI Homology',
       date: 'June 2026',
-      description: 'End-to-end dry-lab computational pipeline mapping protein target configurations. Features 3D homology modeling using SWISS-MODEL and active molecular docking simulations using AutoDock Vina.',
-      tags: ['Python', 'AutoDock Vina', 'PyMOL']
+      description: 'End-to-end dry-lab pipeline: NCBI BLAST searches → homology modeling (SWISS-MODEL) → molecular docking (AutoDock Vina). Identified 3 potential inhibitors with binding energies < -8.0 kcal/mol.',
+      tags: ['Python', 'NCBI BLAST', 'AutoDock Vina', 'PyMOL'],
+      link: 'https://github.com/Ayoleyi-dev',
+      status: 'Active'
     },
     {
       id: 2,
-      title: 'Agrospectra: NDVI Crop Health Analysis',
+      title: 'Agrospectra NDVI Analysis',
       category: 'Pharmacoinformatics',
       date: 'July 2026',
-      description: 'A specialized remote sensing pipeline designed to evaluate agricultural vegetation vitality. Processes multi-spectral image bands to calculate NDVI using matrix mathematics.',
-      tags: ['Python', 'NumPy', 'OpenCV']
+      description: 'Analyzed remote satellite imagery using Python to track vegetation changes. Processed spectral raster data to calculate health indices using array mathematics.',
+      tags: ['Python', 'NumPy', 'OpenCV', 'Matplotlib'],
+      link: 'https://github.com/Ayoleyi-dev/Agrospectra-NDVI-Analysis',
+      status: 'Completed'
     },
     {
       id: 3,
@@ -117,13 +176,36 @@ const BioLab = () => {
       category: 'Chemoinformatics',
       date: 'June 2026',
       description: 'Bridging bio- and chemoinformatics to automate high-throughput virtual screening of small molecule libraries.',
-      tags: ['R', 'Virtual Screening', 'Chemoinformatics']
+      tags: ['R', 'Virtual Screening', 'Chemoinformatics'],
+      status: 'In Progress'
     }
   ];
 
   const filteredProjects = activeCategory === 'All' 
     ? researchProjects 
     : researchProjects.filter(project => project.category === activeCategory);
+
+  // Terminal Typing Animation Effect
+  useEffect(() => {
+    const commands = [
+      { text: 'marvelous@probook:~$ autodock_vina --receptor protein.pdbqt --ligand ligand.pdbqt', delay: 500 },
+      { text: '[INFO] Initializing grid box parameters...', delay: 1500, color: 'text-slate-400' },
+      { text: '[INFO] Performing molecular docking...', delay: 2500, color: 'text-slate-400' },
+      { text: '[INFO] Best binding energy: -8.4 kcal/mol', delay: 4000, color: 'text-emerald-400' },
+      { text: '', delay: 4500 },
+      { text: 'marvelous@probook:~$ python3 run_ndvi_analysis.py', delay: 5500 },
+      { text: 'Loading Agrospectra geospatial data...', delay: 6500, color: 'text-blue-400' },
+      { text: 'Processing NDVI bands... 100%', delay: 7500, color: 'text-slate-500' }
+    ];
+
+    const timers = commands.map((cmd) => {
+      return setTimeout(() => {
+        setTerminalLines(prev => [...prev, { text: cmd.text, color: cmd.color || 'text-slate-300' }]);
+      }, cmd.delay);
+    });
+
+    return () => timers.forEach(timer => clearTimeout(timer));
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -174,22 +256,29 @@ const BioLab = () => {
                       <span className="text-xs font-mono text-slate-500 bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-md">{project.date}</span>
                     </div>
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">{project.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {project.tags.map(tag => (
-                        <span key={tag} className="text-xs font-medium text-[var(--dynamic-accent)] bg-[var(--dynamic-accent)]/10 px-2 py-1 rounded-md">
-                          {tag}
-                        </span>
-                      ))}
+                    <div className="flex flex-wrap items-center justify-between gap-2 mt-4 border-t border-slate-200 dark:border-slate-800 pt-4">
+                      <div className="flex flex-wrap gap-2">
+                        {project.tags.map(tag => (
+                          <span key={tag} className="text-xs font-medium text-[var(--dynamic-accent)] bg-[var(--dynamic-accent)]/10 px-2 py-1 rounded-md">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      {project.link && (
+                        <a 
+                          href={project.link} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="text-xs font-bold text-white bg-[var(--dynamic-accent)] px-3 py-1.5 rounded-lg hover:scale-105 transition-transform flex items-center gap-1 shadow-md"
+                        >
+                          <ExternalLink size={12} />
+                          View Code
+                        </a>
+                      )}
                     </div>
                   </motion.div>
                 ))}
               </AnimatePresence>
-              
-              {filteredProjects.length === 0 && (
-                <div className="text-center text-slate-500 py-10">
-                  No projects currently populated in this category.
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -201,17 +290,18 @@ const BioLab = () => {
             <span className="text-slate-400 uppercase tracking-widest font-bold">WSL Ubuntu Runtime</span>
           </div>
           <div className="space-y-3 flex-1 overflow-y-auto opacity-90">
-            <p><span className="text-emerald-500 font-bold">marvelous@probook:~$</span> autodock_vina --receptor protein.pdbqt --ligand ligand.pdbqt</p>
-            <p className="text-slate-400">[INFO] Performing molecular docking...</p>
-            <p className="text-slate-400">[INFO] Best binding energy: -8.4 kcal/mol</p>
-            
-            <p className="text-emerald-500 font-bold mt-4">marvelous@probook:~$<span className="text-slate-300"> python3 run_ndvi_analysis.py</span></p>
-            <p className="text-blue-400">Loading Agrospectra geospatial data...</p>
-            <p className="text-slate-500">Processing NDVI bands... 100%</p>
-            
-            <p className="text-emerald-500 font-bold mt-4">marvelous@probook:~$<span className="text-slate-300"> sqlcmd -S localhost -d HealthWarehouse</span></p>
-            <p className="text-blue-400">1&gt; SELECT COUNT(*) FROM PatientVisits;</p>
-            <p className="text-slate-500">2&gt; GO</p>
+            {terminalLines.map((line, i) => (
+              <p key={i} className={line.color}>
+                {line.text.includes('marvelous@probook:~$') ? (
+                  <>
+                    <span className="text-emerald-500 font-bold">marvelous@probook:~$ </span>
+                    <span className="text-slate-300">{line.text.replace('marvelous@probook:~$ ', '')}</span>
+                  </>
+                ) : (
+                  line.text
+                )}
+              </p>
+            ))}
             <p className="text-[var(--dynamic-accent)] animate-pulse mt-2">_</p>
           </div>
         </div>
@@ -221,53 +311,36 @@ const BioLab = () => {
 };
 
 const Analytics = () => {
-  const dataProjects = [
-    {
-      title: 'Public Health Data Warehouse & Analytics Pipeline',
-      tool: 'T-SQL & Power BI',
-      description: 'Engineered a relational data warehouse using synthetic hospital data to perform complex SQL analysis and visualize healthcare metrics.',
-      status: 'Completed',
-      link: 'https://github.com/Ayoleyi-dev/Public-Health-Data-Warehouse-Analytics-Pipeline'
-    },
-    {
-      title: 'Jumia Phone Market Web Scraping',
-      tool: 'Python & BeautifulSoup',
-      description: 'Built an automated ETL pipeline to scrape e-commerce data, extracting pricing and specifications for market trend analysis.',
-      status: 'Completed',
-      link: 'https://github.com/Ayoleyi-dev/Jumia-Phone-Market-Webscraping-EDA'
-    },
-    {
-      title: 'AI Document Extraction QA & Annotation Validator',
-      tool: 'Python & JSON',
-      description: 'A programmatic verification framework executing automated type-enforcement and validation checks to isolate structural schema anomalies.',
-      status: 'Completed',
-      link: 'https://github.com/Ayoleyi-dev/AI-Document-Extraction-QA-Validator'
-    },
-    {
-      title: 'COVID-19 Nigeria Power BI Dashboard',
-      tool: 'Power BI & Excel',
-      description: 'Developed an interactive dashboard tracking COVID-19 metrics across Nigeria, enabling data-driven public health insights.',
-      status: 'Completed',
-      link: 'https://github.com/Ayoleyi-dev/COVID-19-Nigeria-PowerBI-Dashboard'
-    },
-    {
-      title: 'Spotify EDA & Chocolate Sales Dashboards',
-      tool: 'Python & Advanced Excel',
-      description: 'Conducted Exploratory Data Analysis on streaming data and built advanced Pivot Table dashboards for retail sales tracking.',
-      status: 'Completed',
-      link: 'https://github.com/Ayoleyi-dev/Excel-Chocolate-Sales-Analysis'
-    }
+  const { repos, loading, error } = useGitHubRepos('Ayoleyi-dev');
+
+  const liveProjects = repos.slice(0, 6).map(repo => ({
+    title: repo.name.replace(/-/g, ' '),
+    tool: repo.language || 'Multi-stack',
+    description: repo.description || 'An active project in my GitHub repository.',
+    status: repo.archived ? 'Archived' : 'Active',
+    link: repo.html_url
+  }));
+
+  const fallbackProjects = [
+    { title: 'Public Health Data Warehouse', tool: 'T-SQL & Power BI', description: 'Engineered a relational data warehouse for healthcare metrics.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Public-Health-Data-Warehouse-Analytics-Pipeline' },
+    { title: 'Jumia Phone Market Web Scraping', tool: 'Python & BS4', description: 'Automated ETL pipeline for e-commerce market trend analysis.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Jumia-Phone-Market-Webscraping-EDA' },
+    { title: 'Agrospectra NDVI Analysis', tool: 'Python & Geospatial', description: 'Analyzed NDVI data to assess agricultural changes.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Agrospectra-NDVI-Analysis' },
+    { title: 'AI Document Extraction QA Validator', tool: 'Python & JSON', description: 'Programmatic verification framework for enterprise document processing workflows.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/AI-Document-Extraction-QA-Validator' }
   ];
+
+  const dataProjects = error || repos.length === 0 ? fallbackProjects : liveProjects;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-slate-200/50 dark:bg-slate-800/50 rounded-3xl border border-slate-300 dark:border-slate-700 backdrop-blur-sm gap-4">
         <div>
           <h2 className="text-2xl font-bold mb-1 flex items-center gap-2">
-            <LayoutDashboard className="text-[var(--dynamic-accent)]" size={24} /> 
+            <LayoutDashboard className="text-[var(--dynamic-accent)]" size={24} />
             Data Analytics Portfolio
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 font-medium">Certified analysis across Python, SQL, Power BI, and R ecosystems.</p>
+          <p className="text-slate-600 dark:text-slate-400 font-medium">
+            {loading ? 'Syncing with GitHub API...' : 'Certified analysis across Python, SQL, Power BI, and R ecosystems.'}
+          </p>
         </div>
       </div>
 
@@ -298,17 +371,17 @@ const Analytics = () => {
             </div>
           </div>
         </div>
-
+        
         <div className="xl:col-span-2 space-y-4">
           <h3 className="font-bold px-2 flex items-center gap-2">
             <Database size={18} className="text-[var(--dynamic-accent)]" />
-            Applied Data Projects (Live from GitHub)
+            Applied Data Projects {(error || repos.length === 0) ? '(Fallback Mode)' : '(Live from GitHub)'}
           </h3>
           <div className="grid grid-cols-1 gap-4">
             {dataProjects.map((project, i) => (
               <div key={i} className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg">{project.title}</h4>
+                  <h4 className="font-bold text-lg capitalize">{project.title}</h4>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{project.description}</p>
                 </div>
                 <div className="flex flex-row md:flex-col items-center md:items-end gap-2 md:gap-1 min-w-[120px]">
@@ -316,7 +389,7 @@ const Analytics = () => {
                     {project.tool}
                   </span>
                   <div className="flex items-center gap-2 mt-2 md:mt-0">
-                    <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-lg">
+                    <span className={`text-xs font-bold px-3 py-1 rounded-lg ${project.status === 'Active' ? 'text-emerald-500 bg-emerald-500/10' : 'text-orange-500 bg-orange-500/10'}`}>
                       {project.status}
                     </span>
                     <a href={project.link} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-[var(--dynamic-accent)] transition-colors">
@@ -333,31 +406,34 @@ const Analytics = () => {
   );
 };
 
-const WebAgency = () => {
+const SoftwareEngineering = () => {
   const portfolioProjects = [
     {
-      title: 'Local E-Commerce Redesign',
-      client: 'Retail Client (Lagos)',
-      category: 'Web Development',
-      description: 'Engineered a lightning-fast vanilla JavaScript and CSS storefront, reducing page load times by 40% and improving mobile conversion rates.',
-      tech: ['HTML5', 'Vanilla JS', 'Tailwind CSS'],
-      metric: '+25% Sales'
-    },
-    {
-      title: 'Brand Identity & Ad Funnel',
-      client: 'Pixel Ascent Ads',
-      category: 'Digital Marketing',
-      description: 'Architected a multi-platform digital ad campaign targeting university demographics, resulting in high-yield lead generation.',
-      tech: ['Meta Ads', 'Figma', 'SEO'],
-      metric: '3.2% CTR'
-    },
-    {
-      title: 'ULLSSA Tech Symposium Landing Page',
-      client: 'UNILAG Departmental',
-      category: 'UI/UX Architecture',
-      description: 'Designed and deployed an interactive registration portal for the annual science symposium, handling over 500 concurrent user sessions.',
+      title: 'ULLSSA Tech Symposium Platform',
+      client: 'UNILAG Departmental Initiative',
+      category: 'Full-Stack Architecture',
+      description: 'Engineered an interactive registration portal handling 500+ concurrent users with React and Framer Motion.',
       tech: ['React', 'Framer Motion', 'Vite'],
-      metric: '500+ Users'
+      metric: '500+ Users',
+      link: 'https://github.com/Ayoleyi-dev'
+    },
+    {
+      title: 'High-Performance E-Commerce Engine',
+      client: 'Lagos Retail Partner',
+      category: 'Frontend Optimization',
+      description: 'Built a zero-dependency storefront with vanilla JS, reducing page load by 40% and improving mobile conversion.',
+      tech: ['HTML5', 'Vanilla JS', 'CSS3'],
+      metric: '+25% Sales',
+      link: 'https://github.com/Ayoleyi-dev'
+    },
+    {
+      title: 'This Digital Research Lab',
+      client: 'Personal Project',
+      category: 'React Architecture',
+      description: 'Built a dynamic portfolio system with real-time GitHub API integration, dark mode, and responsive design.',
+      tech: ['React', 'Tailwind', 'GitHub API'],
+      metric: '190+ Commits',
+      link: 'https://github.com/Ayoleyi-dev/Ayoleyi-s-digital-architecture-hub'
     }
   ];
 
@@ -366,15 +442,11 @@ const WebAgency = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-slate-200/50 dark:bg-slate-800/50 rounded-3xl border border-slate-300 dark:border-slate-700 backdrop-blur-sm gap-4">
         <div>
           <h2 className="text-2xl font-black mb-1 flex items-center gap-2">
-            <Terminal className="text-[var(--dynamic-accent)]" size={24} /> 
-            Pixel Ascent Ads & Web Studio
+            <Code className="text-[var(--dynamic-accent)]" size={24} /> 
+            Software Engineering
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 font-medium">Commercial web architecture and data-driven digital marketing.</p>
+          <p className="text-slate-600 dark:text-slate-400 font-medium">Robust digital architecture and frontend systems engineering.</p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold rounded-xl shadow-lg hover:scale-105 transition-transform">
-          <Calendar size={16} />
-          Book Agency Consult
-        </button>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -386,8 +458,8 @@ const WebAgency = () => {
           </div>
           <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors group">
             <TrendingUp className="text-[var(--dynamic-accent)] mb-3" size={24} />
-            <h3 className="font-bold text-lg mb-1">Pixel Ascent Marketing</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Data-driven digital ad campaigns, funnel optimization, and comprehensive brand identity scaling.</p>
+            <h3 className="font-bold text-lg mb-1">API Integration</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Seamless connection of frontend interfaces with RESTful APIs and external data ecosystems.</p>
           </div>
           <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors group">
             <Smartphone className="text-[var(--dynamic-accent)] mb-3" size={24} />
@@ -417,7 +489,9 @@ const WebAgency = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
                       <h4 className="font-bold text-lg group-hover:text-[var(--dynamic-accent)] transition-colors">{project.title}</h4>
-                      <ExternalLink size={14} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <a href={project.link} target="_blank" rel="noreferrer">
+                        <ExternalLink size={14} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity hover:text-[var(--dynamic-accent)] cursor-pointer" />
+                      </a>
                     </div>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{project.client} • {project.category}</p>
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">{project.description}</p>
@@ -453,7 +527,7 @@ const Contact = () => (
       <Mail className="mx-auto text-[var(--dynamic-accent)] mb-6 animate-pulse" size={56} />
       <h2 className="text-3xl font-black mb-4">Send me an email today </h2>
       <p className="text-slate-600 dark:text-slate-400 mb-8 text-lg max-w-xl mx-auto">
-        Based in the Lagos/Ogun area. Available for freelance web architecture, data analysis consultations, and bioinformatics research collaborations.
+        Based in the Lagos/Ogun area. Available for software architecture, data analysis consultations, and bioinformatics research collaborations.
       </p>
       <a href="mailto:ayoleyi05@gmail.com" className="inline-flex items-center gap-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-8 py-4 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform">
         <Mail size={20} />
@@ -485,7 +559,6 @@ const Contact = () => (
   </div>
 );
 
-
 // --- MAIN APPLICATION ---
 
 export default function App() {
@@ -497,7 +570,7 @@ export default function App() {
     { id: 'profile', label: 'Identity & Skills', icon: User },
     { id: 'biolab', label: 'Bioinformatics Lab', icon: Beaker },
     { id: 'analytics', label: 'Data Analytics', icon: LayoutDashboard },
-    { id: 'webdev', label: 'Web Dev & Agency', icon: Terminal },
+    { id: 'webdev', label: 'Software Engineering', icon: Code },
     { id: 'contact', label: 'Contact', icon: Mail },
   ];
 
@@ -512,7 +585,7 @@ export default function App() {
           <div className="flex justify-between items-center md:block mb-2 md:mb-10">
             <div>
               <h1 className="text-xl md:text-2xl font-black tracking-tight bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-500 bg-clip-text text-transparent">Portfolio Engine</h1>
-              <span className="hidden md:block text-xs font-mono text-slate-500 mt-1">v1.1.0 Alpha</span>
+              <span className="hidden md:block text-xs font-mono text-slate-500 mt-1">v1.2.0 Scientific</span>
             </div>
             
             <button
@@ -523,16 +596,11 @@ export default function App() {
             </button>
           </div>
 
-          <div className="md:hidden flex items-center mb-2 px-1">
-             <span className="text-[10px] font-black uppercase tracking-widest text-[var(--dynamic-accent)] animate-pulse flex items-center gap-1 opacity-80">
-               Swipe Menu <span className="text-sm leading-none">→</span>
-             </span>
-          </div>
-
           <div className="relative w-full">
-            <nav className="flex overflow-x-auto md:flex-col gap-2 md:gap-3 pb-2 md:pb-0 hide-scrollbar pr-12 md:pr-0">
-              {navItems.map((item) => {
+            <nav className="flex overflow-x-auto md:flex-col gap-2 md:gap-3 pb-2 md:pb-0 hide-scrollbar pr-8 md:pr-0">
+              {navItems.map((item, index) => {
                 const Icon = item.icon;
+                const isLast = index === navItems.length - 1;
                 return (
                   <button
                     key={item.id}
@@ -541,7 +609,7 @@ export default function App() {
                       activeTab === item.id 
                         ? 'bg-[var(--dynamic-accent)] text-white shadow-md md:transform md:scale-105' 
                         : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-900'
-                    }`}
+                    } ${isLast ? 'opacity-70 md:opacity-100 mr-8 md:mr-0' : ''}`}
                   >
                     <Icon size={18} className="md:w-5 md:h-5" />
                     <span className="whitespace-nowrap">{item.label}</span>
@@ -555,9 +623,18 @@ export default function App() {
         </div>
 
         <div className="hidden md:block space-y-6 pt-6 border-t border-slate-300 dark:border-slate-800 mt-4">
+          <a 
+            href="/Ayoleyi_Three_Resumes.pdf" 
+            download="Ayoleyi_Gbenga-Ayodeji_Resume.pdf"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[var(--dynamic-accent)] text-white font-bold rounded-xl shadow-lg hover:scale-105 transition-transform mb-4"
+          >
+            <Download size={18} />
+            Download CV
+          </a>
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-500 flex justify-between uppercase tracking-wider">
-              <span>System Hue</span>
+              <span>Theme Color</span>
+              <span className="normal-case text-[10px]">Hue: {themeHue}°</span>
             </label>
             <input 
               type="range" 
@@ -574,7 +651,7 @@ export default function App() {
             onClick={() => setDarkMode(!darkMode)}
             className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold border-2 border-slate-300 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors"
           >
-            <span className="text-slate-600 dark:text-slate-400">Environment</span>
+            <span className="text-slate-600 dark:text-slate-400">Light/Dark Mode</span>
             {darkMode ? <Moon size={18} className="text-yellow-400" /> : <Sun size={18} className="text-orange-500" />}
           </button>
         </div>
@@ -604,7 +681,7 @@ export default function App() {
               {activeTab === 'profile' && <Profile />}
               {activeTab === 'biolab' && <BioLab />}
               {activeTab === 'analytics' && <Analytics />}
-              {activeTab === 'webdev' && <WebAgency />}
+              {activeTab === 'webdev' && <SoftwareEngineering />}
               {activeTab === 'contact' && <Contact />}
             </motion.div>
           </AnimatePresence>
