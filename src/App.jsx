@@ -1,100 +1,90 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Beaker, Terminal, Calendar, Sun, Moon, User, Mail, Code, Database, Dna, Activity, Globe, TrendingUp, Smartphone, ExternalLink, GitBranch, Briefcase, Megaphone, MessageCircle } from 'lucide-react';
+import { LayoutDashboard, Beaker, Terminal, Calendar, Sun, Moon, User, Mail, Code, Database, Dna, Globe, TrendingUp, Smartphone, ExternalLink, GitBranch, Briefcase, Megaphone, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- HUB COMPONENTS ---
 
 const Profile = () => (
   <div className="space-y-6">
-    <div className="p-8 bg-slate-200/50 dark:bg-slate-800/50 rounded-3xl border border-slate-300 dark:border-slate-700 backdrop-blur-sm">
-      <h2 className="text-3xl font-bold mb-2">Ayoleyi Gbenga-Ayodeji Marvelous</h2>
-      <p className="text-lg text-[var(--dynamic-accent)] font-bold mb-6 tracking-wide">Bioinformatics Researcher | Certified Data Analyst | Web Developer</p>
-      <p className="text-slate-700 dark:text-slate-300 max-w-3xl leading-relaxed text-lg">
-        Currently advancing through the 300-level Biochemistry program at the University of Lagos (UNILAG). I specialize in bridging "dry lab" computational research with AI-driven drug discovery, engineering data pipelines, and directing digital architecture strategies.
-      </p>
-    </div>
-    
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors">
-        <Dna className="text-[var(--dynamic-accent)] mb-4" size={28} />
-        <h3 className="font-bold text-lg mb-2">Computational Biology</h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Genomic data analysis, NCBI BLAST workflows, and AI-driven protein folding simulations utilizing a customized WSL Ubuntu environment.</p>
-      </div>
-      <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors">
-        <Database className="text-[var(--dynamic-accent)] mb-4" size={28} />
-        <h3 className="font-bold text-lg mb-2">Data Analytics</h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Certified analyst proficient in Python, R, and SQL. Experienced in processing complex datasets for actionable business and clinical insights.</p>
-      </div>
-      <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors">
-        <Code className="text-[var(--dynamic-accent)] mb-4" size={28} />
-        <h3 className="font-bold text-lg mb-2">Digital Architecture</h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Deployment of modern React frameworks, vanilla web technologies, and comprehensive brand identity management.</p>
+    {/* NEW ANIMATED HERO SECTION */}
+    <div className="relative w-full h-48 md:h-64 rounded-3xl overflow-hidden bg-slate-900 border border-slate-700 mb-6 flex items-center justify-center">
+      {/* Background Grid Pattern */}
+      <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
+      
+      {/* Animated Elements */}
+      <motion.div 
+        animate={{ y: [0, -15, 0], rotate: [0, 5, -5, 0] }} 
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute left-[15%] md:left-[25%] text-[var(--dynamic-accent)] opacity-80"
+      >
+        <Dna size={80} strokeWidth={1.5} />
+      </motion.div>
+
+      <motion.div 
+        animate={{ y: [0, 20, 0], scale: [1, 1.1, 1] }} 
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="absolute right-[15%] md:right-[25%] text-emerald-500 opacity-80"
+      >
+        <Database size={80} strokeWidth={1.5} />
+      </motion.div>
+
+      <div className="z-10 flex flex-col items-center">
+        <div className="px-6 py-2 border border-slate-700 bg-slate-800/80 backdrop-blur-md rounded-full shadow-2xl">
+          <span className="font-mono text-sm tracking-widest text-slate-300">
+            SYSTEM.INITIALIZE(<span className="text-[var(--dynamic-accent)]">"BIO_DATA_MATRIX"</span>)
+          </span>
+        </div>
       </div>
     </div>
 
-    {/* Professional Experience Timeline */}
+    {/* EXISTING PROFILE CONTENT */}
+    <div className="p-8 bg-slate-200/50 dark:bg-slate-800/50 rounded-3xl border border-slate-300 dark:border-slate-700 backdrop-blur-sm">
+      <h2 className="text-3xl font-bold mb-2">Ayoleyi Gbenga-Ayodeji Marvelous</h2>
+      <p className="text-lg text-[var(--dynamic-accent)] font-bold mb-6 tracking-wide">Bioinformatics Researcher | Certified Data Analyst | Digital Architect</p>
+      <p className="text-slate-700 dark:text-slate-300 max-w-3xl leading-relaxed text-lg">
+        Currently advancing through the 300-level Biochemistry program at UNILAG. I am actively transitioning from data analytics into bioinformatics and Computer-Aided Drug Discovery (CADD), bridging biological sciences with data-driven computational insights.
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors">
+        <Dna className="text-[var(--dynamic-accent)] mb-4" size={28} />
+        <h3 className="font-bold text-lg mb-2">Computational Biology & CADD</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Homology modeling (PyMOL, SWISS-MODEL), molecular docking (AutoDock Vina), and chemoinformatics (RDKit, Biopython) within a customized WSL Ubuntu environment.</p>
+      </div>
+      
+      <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors">
+        <Database className="text-[var(--dynamic-accent)] mb-4" size={28} />
+        <h3 className="font-bold text-lg mb-2">Data Analytics & ETL</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Certified analyst proficient in Python (Pandas, BeautifulSoup), T-SQL, R, and Power BI. Experienced in building ETL pipelines, dimensional modeling, and advanced Excel dashboards.</p>
+      </div>
+      
+      <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors">
+        <Code className="text-[var(--dynamic-accent)] mb-4" size={28} />
+        <h3 className="font-bold text-lg mb-2">Digital Architecture</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Deployment of modern React frameworks (Vite), vanilla web technologies, Bash scripting, and comprehensive brand identity management via Git/GitHub workflows.</p>
+      </div>
+    </div>
+
     <div className="p-8 bg-slate-100 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 mt-6">
       <h3 className="font-bold text-xl mb-6 flex items-center gap-2">
         <Calendar className="text-[var(--dynamic-accent)]" size={24} />
         Professional Experience
       </h3>
       <div className="space-y-6 border-l-2 border-slate-200 dark:border-slate-800 ml-3 pl-6">
-        
         <div className="relative">
           <div className="absolute -left-[35px] top-1.5 w-4 h-4 rounded-full bg-[var(--dynamic-accent)] shadow-[0_0_10px_var(--dynamic-accent)]" />
           <h4 className="font-bold text-lg">Assistant Tutor & Community Manager</h4>
           <p className="text-[var(--dynamic-accent)] font-bold text-sm mb-2">ULLSSA Skill Up Programme, UNILAG | May 2026 – Present</p>
           <p className="text-sm text-slate-600 dark:text-slate-400">Managing a 10-week intensive data analysis track. Responsible for curriculum delivery, student progress tracking, and providing technical mentorship in data analytics software.</p>
         </div>
-
         <div className="relative">
           <div className="absolute -left-[35px] top-1.5 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700" />
           <h4 className="font-bold text-lg">SIWES Industrial Trainee</h4>
           <p className="text-slate-500 dark:text-slate-400 font-bold text-sm mb-2">NAFDAC | 2025</p>
           <p className="text-sm text-slate-600 dark:text-slate-400">Completed a 3-month industrial attachment, gaining exposure to regulatory laboratory environments, quality assurance protocols, and operational workflows.</p>
         </div>
-
       </div>
-    </div>
-  </div>
-);
-
-const Contact = () => (
-  <div className="max-w-4xl mx-auto mt-4 space-y-6">
-    {/* Main Comm Console */}
-    <div className="p-10 bg-slate-200/50 dark:bg-slate-800/50 rounded-3xl border border-slate-300 dark:border-slate-700 text-center backdrop-blur-sm">
-      <Mail className="mx-auto text-[var(--dynamic-accent)] mb-6 animate-pulse" size={56} />
-      <h2 className="text-3xl font-black mb-4">Send me an email today </h2>
-      <p className="text-slate-600 dark:text-slate-400 mb-8 text-lg max-w-xl mx-auto">
-        Based in the Lagos/Ogun area. Available for freelance web architecture, data analysis consultations, and bioinformatics research collaborations.
-      </p>
-      <a href="mailto:ayoleyi05@gmail.com" className="inline-flex items-center gap-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-8 py-4 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform">
-        <Mail size={20} />
-        Send Direct Email
-      </a>
-    </div>
-
-    {/* Professional Network Grid */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <a href="https://www.linkedin.com/in/ayoleyi-gbenga-ayodeji-aa99b6395/" target="_blank" rel="noreferrer" className="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[#0A66C2] transition-colors group">
-        <Briefcase size={32} className="mb-3 text-slate-400 group-hover:text-[#0A66C2] transition-colors" />
-        <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-[#0A66C2]">LinkedIn</span>
-      </a>
-      
-      <a href="https://github.com/Ayoleyi-dev" target="_blank" rel="noreferrer" className="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-slate-900 dark:hover:border-white transition-colors group">
-        <GitBranch size={32} className="mb-3 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
-        <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">GitHub Portfolio</span>
-      </a>
-      
-      <a href="https://x.com/AYOLEYING" target="_blank" rel="noreferrer" className="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[#1DA1F2] transition-colors group">
-        <Megaphone size={32} className="mb-3 text-slate-400 group-hover:text-[#1DA1F2] transition-colors" />
-        <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-[#1DA1F2]">X (Twitter)</span>
-      </a>
-      
-      <a href="https://wa.me/qr/YK522NYXDRYLI1" target="_blank" rel="noreferrer" className="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[#25D366] transition-colors group">
-        <MessageCircle size={32} className="mb-3 text-slate-400 group-hover:text-[#25D366] transition-colors" />
-        <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-[#25D366]">WhatsApp Direct</span>
-      </a>
     </div>
   </div>
 );
@@ -107,35 +97,27 @@ const BioLab = () => {
   const researchProjects = [
     {
       id: 1,
-      title: 'AI-Driven Homology for Targeted Drug Discovery',
+      title: 'AI-Driven Homology & Targeted Drug Discovery',
       category: 'AI Homology',
       date: 'June 2026',
-      description: 'Conducted extensive NCBI BLAST searches and deployed protein folding simulations to identify potential target inhibitors.',
-      tags: ['Python', 'NCBI BLAST', '3D Simulation']
+      description: 'End-to-end dry-lab computational pipeline mapping protein target configurations. Features 3D homology modeling using SWISS-MODEL and active molecular docking simulations using AutoDock Vina.',
+      tags: ['Python', 'AutoDock Vina', 'PyMOL']
     },
     {
       id: 2,
+      title: 'Agrospectra: NDVI Crop Health Analysis',
+      category: 'Pharmacoinformatics',
+      date: 'July 2026',
+      description: 'A specialized remote sensing pipeline designed to evaluate agricultural vegetation vitality. Processes multi-spectral image bands to calculate NDVI using matrix mathematics.',
+      tags: ['Python', 'NumPy', 'OpenCV']
+    },
+    {
+      id: 3,
       title: 'Automated Drug Discovery Pipeline',
       category: 'Chemoinformatics',
       date: 'June 2026',
       description: 'Bridging bio- and chemoinformatics to automate high-throughput virtual screening of small molecule libraries.',
       tags: ['R', 'Virtual Screening', 'Chemoinformatics']
-    },
-    {
-      id: 3,
-      title: 'Genomic Variant Impact Analysis',
-      category: 'Pharmacoinformatics',
-      date: 'Pending',
-      description: 'Analyzing the metabolic impact of specific genomic variants on drug efficacy using computational models.',
-      tags: ['SQL', 'Genomics', 'Data Modeling']
-    },
-    {
-      id: 4,
-      title: 'Novel Compound X-72 Characterization',
-      category: 'Novel Discoveries',
-      date: 'Concept Phase',
-      description: 'Early-stage dry lab characterization of binding affinities for a theorized novel therapeutic compound.',
-      tags: ['Ubuntu WSL', 'Molecular Docking']
     }
   ];
 
@@ -209,7 +191,6 @@ const BioLab = () => {
                 </div>
               )}
             </div>
-
           </div>
         </div>
 
@@ -220,12 +201,17 @@ const BioLab = () => {
             <span className="text-slate-400 uppercase tracking-widest font-bold">WSL Ubuntu Runtime</span>
           </div>
           <div className="space-y-3 flex-1 overflow-y-auto opacity-90">
-            <p><span className="text-emerald-500 font-bold">marvelous@probook:~$</span> ./run_blastp.sh -query target.fasta</p>
-            <p className="text-slate-400">[INFO] Aligning genomic sequences...</p>
-            <p className="text-slate-400">[INFO] Database: nr_v2 mounted.</p>
-            <p className="text-emerald-500 font-bold mt-4">marvelous@probook:~$<span className="text-slate-300"> python3 fold_sim.py --gpu 1</span></p>
-            <p className="text-blue-400">Loading neural network weights...</p>
-            <p className="text-slate-500">Iteration 1/500: Energy = -452.1</p>
+            <p><span className="text-emerald-500 font-bold">marvelous@probook:~$</span> autodock_vina --receptor protein.pdbqt --ligand ligand.pdbqt</p>
+            <p className="text-slate-400">[INFO] Performing molecular docking...</p>
+            <p className="text-slate-400">[INFO] Best binding energy: -8.4 kcal/mol</p>
+            
+            <p className="text-emerald-500 font-bold mt-4">marvelous@probook:~$<span className="text-slate-300"> python3 run_ndvi_analysis.py</span></p>
+            <p className="text-blue-400">Loading Agrospectra geospatial data...</p>
+            <p className="text-slate-500">Processing NDVI bands... 100%</p>
+            
+            <p className="text-emerald-500 font-bold mt-4">marvelous@probook:~$<span className="text-slate-300"> sqlcmd -S localhost -d HealthWarehouse</span></p>
+            <p className="text-blue-400">1&gt; SELECT COUNT(*) FROM PatientVisits;</p>
+            <p className="text-slate-500">2&gt; GO</p>
             <p className="text-[var(--dynamic-accent)] animate-pulse mt-2">_</p>
           </div>
         </div>
@@ -237,22 +223,39 @@ const BioLab = () => {
 const Analytics = () => {
   const dataProjects = [
     {
-      title: 'Pharmaceutical Quality Assurance Metrics',
-      tool: 'SQL & Tableau',
-      description: 'Engineered relational database queries to track compound testing turnaround times and quality control compliance metrics.',
-      status: 'Completed'
+      title: 'Public Health Data Warehouse & Analytics Pipeline',
+      tool: 'T-SQL & Power BI',
+      description: 'Engineered a relational data warehouse using synthetic hospital data to perform complex SQL analysis and visualize healthcare metrics.',
+      status: 'Completed',
+      link: 'https://github.com/Ayoleyi-dev/Public-Health-Data-Warehouse-Analytics-Pipeline'
     },
     {
-      title: 'Genomic Dataset Variance Analysis',
-      tool: 'Python (Pandas/NumPy)',
-      description: 'Processed large-scale CSV datasets to identify statistically significant metabolic variances using custom Python scripts.',
-      status: 'In Progress'
+      title: 'Jumia Phone Market Web Scraping',
+      tool: 'Python & BeautifulSoup',
+      description: 'Built an automated ETL pipeline to scrape e-commerce data, extracting pricing and specifications for market trend analysis.',
+      status: 'Completed',
+      link: 'https://github.com/Ayoleyi-dev/Jumia-Phone-Market-Webscraping-EDA'
     },
     {
-      title: 'Digital Ad Campaign ROI Modeling',
-      tool: 'R Statistics',
-      description: 'Applied statistical modeling to historical marketing data to optimize budget allocation and predict customer acquisition costs.',
-      status: 'Completed'
+      title: 'AI Document Extraction QA & Annotation Validator',
+      tool: 'Python & JSON',
+      description: 'A programmatic verification framework executing automated type-enforcement and validation checks to isolate structural schema anomalies.',
+      status: 'Completed',
+      link: 'https://github.com/Ayoleyi-dev/AI-Document-Extraction-QA-Validator'
+    },
+    {
+      title: 'COVID-19 Nigeria Power BI Dashboard',
+      tool: 'Power BI & Excel',
+      description: 'Developed an interactive dashboard tracking COVID-19 metrics across Nigeria, enabling data-driven public health insights.',
+      status: 'Completed',
+      link: 'https://github.com/Ayoleyi-dev/COVID-19-Nigeria-PowerBI-Dashboard'
+    },
+    {
+      title: 'Spotify EDA & Chocolate Sales Dashboards',
+      tool: 'Python & Advanced Excel',
+      description: 'Conducted Exploratory Data Analysis on streaming data and built advanced Pivot Table dashboards for retail sales tracking.',
+      status: 'Completed',
+      link: 'https://github.com/Ayoleyi-dev/Excel-Chocolate-Sales-Analysis'
     }
   ];
 
@@ -264,7 +267,7 @@ const Analytics = () => {
             <LayoutDashboard className="text-[var(--dynamic-accent)]" size={24} /> 
             Data Analytics Portfolio
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 font-medium">Certified analysis across Python, SQL, and R ecosystems.</p>
+          <p className="text-slate-600 dark:text-slate-400 font-medium">Certified analysis across Python, SQL, Power BI, and R ecosystems.</p>
         </div>
       </div>
 
@@ -274,21 +277,21 @@ const Analytics = () => {
           <div className="space-y-8">
             <div>
               <div className="flex justify-between text-sm font-bold mb-2">
-                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500"/> Python (Pandas/SciPy)</span>
+                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500"/> Python (Pandas/BS4)</span>
                 <span>Advanced</span>
               </div>
               <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div className="bg-blue-500 h-full w-[90%]" /></div>
             </div>
             <div>
               <div className="flex justify-between text-sm font-bold mb-2">
-                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500"/> SQL (PostgreSQL/MySQL)</span>
+                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500"/> T-SQL & Power BI</span>
                 <span>Advanced</span>
               </div>
               <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div className="bg-emerald-500 h-full w-[85%]" /></div>
             </div>
             <div>
               <div className="flex justify-between text-sm font-bold mb-2">
-                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-purple-500"/> R (Statistical Modeling)</span>
+                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-purple-500"/> Bash & WSL/Ubuntu</span>
                 <span>Intermediate</span>
               </div>
               <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div className="bg-purple-500 h-full w-[75%]" /></div>
@@ -299,7 +302,7 @@ const Analytics = () => {
         <div className="xl:col-span-2 space-y-4">
           <h3 className="font-bold px-2 flex items-center gap-2">
             <Database size={18} className="text-[var(--dynamic-accent)]" />
-            Applied Data Projects
+            Applied Data Projects (Live from GitHub)
           </h3>
           <div className="grid grid-cols-1 gap-4">
             {dataProjects.map((project, i) => (
@@ -312,9 +315,14 @@ const Analytics = () => {
                   <span className="text-xs font-mono font-bold text-[var(--dynamic-accent)] bg-[var(--dynamic-accent)]/10 px-3 py-1 rounded-lg">
                     {project.tool}
                   </span>
-                  <span className={`text-xs font-bold px-3 py-1 rounded-lg ${project.status === 'Completed' ? 'text-emerald-500 bg-emerald-500/10' : 'text-orange-500 bg-orange-500/10'}`}>
-                    {project.status}
-                  </span>
+                  <div className="flex items-center gap-2 mt-2 md:mt-0">
+                    <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-lg">
+                      {project.status}
+                    </span>
+                    <a href={project.link} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-[var(--dynamic-accent)] transition-colors">
+                      <ExternalLink size={16} />
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
@@ -439,7 +447,44 @@ const WebAgency = () => {
   );
 };
 
-// --- MAIN APPLICATION ---
+const Contact = () => (
+  <div className="max-w-4xl mx-auto mt-4 space-y-6">
+    <div className="p-10 bg-slate-200/50 dark:bg-slate-800/50 rounded-3xl border border-slate-300 dark:border-slate-700 text-center backdrop-blur-sm">
+      <Mail className="mx-auto text-[var(--dynamic-accent)] mb-6 animate-pulse" size={56} />
+      <h2 className="text-3xl font-black mb-4">Send me an email today </h2>
+      <p className="text-slate-600 dark:text-slate-400 mb-8 text-lg max-w-xl mx-auto">
+        Based in the Lagos/Ogun area. Available for freelance web architecture, data analysis consultations, and bioinformatics research collaborations.
+      </p>
+      <a href="mailto:ayoleyi05@gmail.com" className="inline-flex items-center gap-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-8 py-4 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform">
+        <Mail size={20} />
+        Send Direct Email
+      </a>
+    </div>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <a href="https://www.linkedin.com/in/ayoleyi-gbenga-ayodeji-aa99b6395/" target="_blank" rel="noreferrer" className="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[#0A66C2] transition-colors group">
+        <Briefcase size={32} className="mb-3 text-slate-400 group-hover:text-[#0A66C2] transition-colors" />
+        <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-[#0A66C2]">LinkedIn</span>
+      </a>
+      
+      <a href="https://github.com/Ayoleyi-dev" target="_blank" rel="noreferrer" className="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-slate-900 dark:hover:border-white transition-colors group">
+        <GitBranch size={32} className="mb-3 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
+        <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">GitHub Portfolio</span>
+      </a>
+      
+      <a href="https://x.com/AYOLEYING" target="_blank" rel="noreferrer" className="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[#1DA1F2] transition-colors group">
+        <Megaphone size={32} className="mb-3 text-slate-400 group-hover:text-[#1DA1F2] transition-colors" />
+        <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-[#1DA1F2]">X (Twitter)</span>
+      </a>
+      
+      <a href="https://wa.me/qr/YK522NYXDRYLI1" target="_blank" rel="noreferrer" className="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[#25D366] transition-colors group">
+        <MessageCircle size={32} className="mb-3 text-slate-400 group-hover:text-[#25D366] transition-colors" />
+        <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-[#25D366]">WhatsApp Direct</span>
+      </a>
+    </div>
+  </div>
+);
+
 
 // --- MAIN APPLICATION ---
 
@@ -461,11 +506,9 @@ export default function App() {
       className={`min-h-screen flex flex-col md:flex-row transition-colors duration-300 ${darkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}
       style={{ '--dynamic-accent': `hsl(${themeHue}, 80%, 55%)` }}
     >
-      {/* Responsive Sidebar / Top Nav */}
       <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-slate-300 dark:border-slate-800 p-4 md:p-6 flex flex-col justify-between backdrop-blur-xl z-50 shadow-xl sticky top-0 bg-slate-50/95 dark:bg-slate-950/95 md:bg-transparent">
         <div className="w-full">
           
-          {/* Header & Mobile Dark Mode Toggle */}
           <div className="flex justify-between items-center md:block mb-2 md:mb-10">
             <div>
               <h1 className="text-xl md:text-2xl font-black tracking-tight bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-500 bg-clip-text text-transparent">Portfolio Engine</h1>
@@ -480,14 +523,12 @@ export default function App() {
             </button>
           </div>
 
-          {/* UX Swipe Indicator (Mobile Only) */}
           <div className="md:hidden flex items-center mb-2 px-1">
              <span className="text-[10px] font-black uppercase tracking-widest text-[var(--dynamic-accent)] animate-pulse flex items-center gap-1 opacity-80">
                Swipe Menu <span className="text-sm leading-none">→</span>
              </span>
           </div>
 
-          {/* Navigation Wrapper with Edge Fade */}
           <div className="relative w-full">
             <nav className="flex overflow-x-auto md:flex-col gap-2 md:gap-3 pb-2 md:pb-0 hide-scrollbar pr-12 md:pr-0">
               {navItems.map((item) => {
@@ -508,14 +549,11 @@ export default function App() {
                 );
               })}
             </nav>
-            
-            {/* Visual Gradient Fade (Mobile Only) */}
             <div className="absolute top-0 right-0 bottom-2 w-12 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent pointer-events-none md:hidden" />
           </div>
           
         </div>
 
-        {/* Desktop-only Theme Controls */}
         <div className="hidden md:block space-y-6 pt-6 border-t border-slate-300 dark:border-slate-800 mt-4">
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-500 flex justify-between uppercase tracking-wider">
@@ -542,7 +580,6 @@ export default function App() {
         </div>
       </aside>
 
-      {/* Main Workspace Stage */}
       <main className="flex-1 p-4 md:p-10 overflow-y-auto relative w-full">
         <div className="absolute top-0 right-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-[var(--dynamic-accent)] opacity-10 blur-[80px] md:blur-[120px] rounded-full pointer-events-none transition-colors duration-500" />
         
@@ -555,7 +592,6 @@ export default function App() {
           </div>
         </header>
 
-        {/* Dynamic Section Rendering */}
         <div className="relative z-10 w-full overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
