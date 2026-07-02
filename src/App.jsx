@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Beaker, Terminal, Calendar, Sun, Moon, User, Mail, Code, Database, Dna, Globe, TrendingUp, Smartphone, ExternalLink, GitBranch, Briefcase, Megaphone, MessageCircle, Download, FileText, Home } from 'lucide-react';
+import { LayoutDashboard, Beaker, Terminal, Calendar, Sun, Moon, User, Mail, Code, Database, Dna, Globe, TrendingUp, Smartphone, ExternalLink, GitBranch, Briefcase, Megaphone, MessageCircle, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- GITHUB API INTEGRATION HOOK ---
@@ -67,14 +67,6 @@ const Profile = () => (
     <div className="p-8 bg-slate-200/50 dark:bg-slate-800/50 rounded-3xl border border-slate-300 dark:border-slate-700 backdrop-blur-sm">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-2">
         <h2 className="text-3xl font-bold">Ayoleyi Gbenga-Ayodeji Marvelous</h2>
-        <a 
-          href="/Ayoleyi_Three_Resumes.pdf" 
-          download="Ayoleyi_Gbenga-Ayodeji_Resume.pdf"
-          className="flex-shrink-0 px-6 py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold rounded-xl hover:scale-105 transition-transform flex items-center justify-center gap-2 shadow-lg"
-        >
-          <Download size={18} />
-          Resume PDF
-        </a>
       </div>
       
       <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-6">
@@ -318,16 +310,14 @@ const BioLab = () => {
 
 const Analytics = () => {
   const { repos, loading, error } = useGitHubRepos('Ayoleyi-dev');
-  const [activeSkill, setActiveSkill] = useState('All');
+  const [activeSkills, setActiveSkills] = useState([]);
 
-  // The expanded, clickable skill tags
   const filterSkills = [
-    'All', 'Python', 'SQL', 'Power BI', 'Excel', 
+    'Python', 'SQL', 'Power BI', 'Excel', 
     'Webscraping', 'Automation', 'EDA', 'ETL', 
     'Data Cleaning', 'Pandas'
   ];
 
-  // Map the live GitHub data to include topics (tags) for filtering
   const liveProjects = repos.slice(0, 10).map(repo => ({
     id: repo.id,
     title: repo.name.replace(/-/g, ' '),
@@ -348,13 +338,26 @@ const Analytics = () => {
 
   const dataProjects = (error || repos.length === 0) ? fallbackProjects : liveProjects;
 
+  const toggleSkill = (skill) => {
+    if (skill === 'All') {
+      setActiveSkills([]);
+      return;
+    }
+    setActiveSkills(prev => 
+      prev.includes(skill) ? prev.filter(s => s !== skill) : [...prev, skill]
+    );
+  };
+
   const filteredProjects = dataProjects.filter(project => {
-    if (activeSkill === 'All') return true;
-    const searchTarget = activeSkill.toLowerCase().replace(' ', '');
-    const inTool = project.tool.toLowerCase().includes(searchTarget);
-    const inTags = project.tags.some(tag => tag.toLowerCase().replace('-', '').includes(searchTarget));
-    const inTitle = project.title.toLowerCase().includes(searchTarget);
-    return inTool || inTags || inTitle;
+    if (activeSkills.length === 0) return true;
+    
+    return activeSkills.some(skill => {
+      const searchTarget = skill.toLowerCase().replace(' ', '');
+      const inTool = project.tool.toLowerCase().includes(searchTarget);
+      const inTags = project.tags.some(tag => tag.toLowerCase().replace('-', '').includes(searchTarget));
+      const inTitle = project.title.toLowerCase().includes(searchTarget);
+      return inTool || inTags || inTitle;
+    });
   });
 
   return (
@@ -374,14 +377,24 @@ const Analytics = () => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="p-8 bg-slate-100 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 flex flex-col h-fit sticky top-24">
           <h3 className="font-bold mb-2 text-center text-lg">Core Technical Proficiency</h3>
-          <p className="text-xs text-center text-slate-500 mb-6 uppercase tracking-widest font-bold">Select a skill to filter</p>
+          <p className="text-xs text-center text-slate-500 mb-6 uppercase tracking-widest font-bold">Select multiple skills to filter</p>
           <div className="flex flex-wrap gap-2 justify-center">
+            <button
+              onClick={() => toggleSkill('All')}
+              className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all duration-300 border ${
+                activeSkills.length === 0 
+                  ? 'bg-[var(--dynamic-accent)] text-white border-[var(--dynamic-accent)] shadow-md' 
+                  : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)]'
+              }`}
+            >
+              All
+            </button>
             {filterSkills.map(skill => (
               <button
                 key={skill}
-                onClick={() => setActiveSkill(skill)}
+                onClick={() => toggleSkill(skill)}
                 className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all duration-300 border ${
-                  activeSkill === skill 
+                  activeSkills.includes(skill)
                     ? 'bg-[var(--dynamic-accent)] text-white border-[var(--dynamic-accent)] shadow-md transform scale-105' 
                     : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)]'
                 }`}
@@ -588,6 +601,26 @@ const Contact = () => (
       </a>
     </div>
 
+    {/* RESUME DOWNLOAD GRID */}
+    <div className="p-8 bg-slate-100 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-center">
+      <h3 className="font-bold text-xl mb-2">Download My Resumes</h3>
+      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Select the resume tailored to your specific industry requirements.</p>
+      <div className="flex flex-wrap justify-center gap-4">
+        <a href="/Hybrid_Master_Resume.pdf" download className="flex items-center gap-2 px-5 py-2.5 bg-[var(--dynamic-accent)] text-white font-bold rounded-xl shadow-lg hover:scale-105 transition-transform">
+          <Download size={16} /> Hybrid (Master)
+        </a>
+        <a href="/Bioinformatics_Resume.pdf" download className="flex items-center gap-2 px-5 py-2.5 border-2 border-slate-300 dark:border-slate-700 hover:border-[var(--dynamic-accent)] hover:text-[var(--dynamic-accent)] font-bold rounded-xl transition-all">
+          <Download size={16} /> Bioinformatics
+        </a>
+        <a href="/Data_Analytics_Resume.pdf" download className="flex items-center gap-2 px-5 py-2.5 border-2 border-slate-300 dark:border-slate-700 hover:border-[var(--dynamic-accent)] hover:text-[var(--dynamic-accent)] font-bold rounded-xl transition-all">
+          <Download size={16} /> Data Analytics
+        </a>
+        <a href="/Software_Engineering_Resume.pdf" download className="flex items-center gap-2 px-5 py-2.5 border-2 border-slate-300 dark:border-slate-700 hover:border-[var(--dynamic-accent)] hover:text-[var(--dynamic-accent)] font-bold rounded-xl transition-all">
+          <Download size={16} /> Software Eng
+        </a>
+      </div>
+    </div>
+
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <a href="https://www.linkedin.com/in/ayoleyi-gbenga-ayodeji-aa99b6395/" target="_blank" rel="noreferrer" className="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[#0A66C2] transition-colors group">
         <Briefcase size={32} className="mb-3 text-slate-400 group-hover:text-[#0A66C2] transition-colors" />
@@ -638,7 +671,6 @@ export default function App() {
           <div className="flex justify-between items-center md:block mb-6 md:mb-10">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[var(--dynamic-accent)]">
-                {/* User's uploaded picture */}
                 <img src="/ayoleyi.jpg" alt="Ayoleyi Gbenga-Ayodeji Marvelous" className="w-full h-full object-cover" />
               </div>
               <div>
@@ -681,14 +713,35 @@ export default function App() {
         </div>
 
         <div className="hidden md:block space-y-6 pt-6 border-t border-slate-300 dark:border-slate-800 mt-4">
-          <a 
-            href="/Ayoleyi_Three_Resumes.pdf" 
-            download="Ayoleyi_Gbenga-Ayodeji_Resume.pdf"
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[var(--dynamic-accent)] text-white font-bold rounded-xl shadow-lg hover:scale-105 transition-transform mb-4"
-          >
-            <Download size={18} />
-            Download CV
-          </a>
+          
+          {/* CONTEXTUAL RESUME DOWNLOAD */}
+          {(() => {
+            let resumeFile = "Hybrid_Master_Resume.pdf";
+            let resumeLabel = "Download Master CV";
+            
+            if (activeTab === 'biolab') {
+              resumeFile = "Bioinformatics_Resume.pdf";
+              resumeLabel = "Download Bio CV";
+            } else if (activeTab === 'analytics') {
+              resumeFile = "Data_Analytics_Resume.pdf";
+              resumeLabel = "Download Data CV";
+            } else if (activeTab === 'webdev') {
+              resumeFile = "Software_Engineering_Resume.pdf";
+              resumeLabel = "Download Dev CV";
+            }
+
+            return (
+              <a 
+                href={`/${resumeFile}`}
+                download={resumeFile}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[var(--dynamic-accent)] text-white font-bold rounded-xl shadow-lg hover:scale-105 transition-transform mb-4"
+              >
+                <Download size={18} />
+                {resumeLabel}
+              </a>
+            );
+          })()}
+
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-500 flex justify-between uppercase tracking-wider">
               <span>Theme Color</span>
