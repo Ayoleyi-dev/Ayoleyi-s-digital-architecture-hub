@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Beaker, Terminal, Calendar, Sun, Moon, User, Mail, Code, Database, Dna, Globe, TrendingUp, Smartphone, ExternalLink, GitBranch, Briefcase, Megaphone, MessageCircle, Download } from 'lucide-react';
+import { LayoutDashboard, Beaker, Terminal, Calendar, Sun, Moon, User, Mail, Code, Database, Dna, Globe, TrendingUp, Smartphone, ExternalLink, GitBranch, Briefcase, Megaphone, MessageCircle, Download, FileText, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- GITHUB API INTEGRATION HOOK ---
@@ -147,7 +147,7 @@ const BioLab = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [terminalLines, setTerminalLines] = useState([]);
 
-  const categories = ['All', 'AI Homology', 'Chemoinformatics', 'Pharmacoinformatics', 'Novel Discoveries'];
+  const categories = ['All', 'AI Homology', 'Chemoinformatics', 'Pharmacoinformatics'];
 
   const researchProjects = [
     {
@@ -279,6 +279,12 @@ const BioLab = () => {
                   </motion.div>
                 ))}
               </AnimatePresence>
+              
+              {filteredProjects.length === 0 && (
+                <div className="text-center text-slate-500 py-10">
+                  No projects currently populated in this category.
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -312,23 +318,44 @@ const BioLab = () => {
 
 const Analytics = () => {
   const { repos, loading, error } = useGitHubRepos('Ayoleyi-dev');
+  const [activeSkill, setActiveSkill] = useState('All');
 
-  const liveProjects = repos.slice(0, 6).map(repo => ({
+  // The expanded, clickable skill tags
+  const filterSkills = [
+    'All', 'Python', 'SQL', 'Power BI', 'Excel', 
+    'Webscraping', 'Automation', 'EDA', 'ETL', 
+    'Data Cleaning', 'Pandas'
+  ];
+
+  // Map the live GitHub data to include topics (tags) for filtering
+  const liveProjects = repos.slice(0, 10).map(repo => ({
+    id: repo.id,
     title: repo.name.replace(/-/g, ' '),
     tool: repo.language || 'Multi-stack',
     description: repo.description || 'An active project in my GitHub repository.',
     status: repo.archived ? 'Archived' : 'Active',
-    link: repo.html_url
+    link: repo.html_url,
+    tags: repo.topics || []
   }));
 
   const fallbackProjects = [
-    { title: 'Public Health Data Warehouse', tool: 'T-SQL & Power BI', description: 'Engineered a relational data warehouse for healthcare metrics.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Public-Health-Data-Warehouse-Analytics-Pipeline' },
-    { title: 'Jumia Phone Market Web Scraping', tool: 'Python & BS4', description: 'Automated ETL pipeline for e-commerce market trend analysis.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Jumia-Phone-Market-Webscraping-EDA' },
-    { title: 'Agrospectra NDVI Analysis', tool: 'Python & Geospatial', description: 'Analyzed NDVI data to assess agricultural changes.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Agrospectra-NDVI-Analysis' },
-    { title: 'AI Document Extraction QA Validator', tool: 'Python & JSON', description: 'Programmatic verification framework for enterprise document processing workflows.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/AI-Document-Extraction-QA-Validator' }
+    { id: 'f1', title: 'Public Health Data Warehouse', tool: 'T-SQL & Power BI', description: 'Engineered a relational data warehouse for healthcare metrics.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Public-Health-Data-Warehouse-Analytics-Pipeline', tags: ['sql', 'power-bi', 'etl'] },
+    { id: 'f2', title: 'Jumia Phone Market Web Scraping', tool: 'Python & BS4', description: 'Automated ETL pipeline for e-commerce market trend analysis.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Jumia-Phone-Market-Webscraping-EDA', tags: ['python', 'webscraping', 'eda', 'pandas'] },
+    { id: 'f3', title: 'Agrospectra NDVI Analysis', tool: 'Python & Geospatial', description: 'Analyzed NDVI data to assess agricultural changes.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Agrospectra-NDVI-Analysis', tags: ['python', 'geospatial', 'data-visualization'] },
+    { id: 'f4', title: 'AI Document Extraction QA Validator', tool: 'Python & JSON', description: 'Programmatic verification framework for enterprise document processing workflows.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/AI-Document-Extraction-QA-Validator', tags: ['python', 'automation', 'data-cleaning'] },
+    { id: 'f5', title: 'Spotify EDA & Dashboards', tool: 'Python & Excel', description: 'Exploratory Data Analysis and Pivot Table dashboards.', status: 'Active', link: 'https://github.com/Ayoleyi-dev/Spotify-EDA-project', tags: ['python', 'excel', 'eda'] }
   ];
 
-  const dataProjects = error || repos.length === 0 ? fallbackProjects : liveProjects;
+  const dataProjects = (error || repos.length === 0) ? fallbackProjects : liveProjects;
+
+  const filteredProjects = dataProjects.filter(project => {
+    if (activeSkill === 'All') return true;
+    const searchTarget = activeSkill.toLowerCase().replace(' ', '');
+    const inTool = project.tool.toLowerCase().includes(searchTarget);
+    const inTags = project.tags.some(tag => tag.toLowerCase().replace('-', '').includes(searchTarget));
+    const inTitle = project.title.toLowerCase().includes(searchTarget);
+    return inTool || inTags || inTitle;
+  });
 
   return (
     <div className="space-y-6">
@@ -345,60 +372,86 @@ const Analytics = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="p-8 bg-slate-100 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 flex flex-col justify-center">
-          <h3 className="font-bold mb-8 text-center text-lg">Core Technical Proficiency</h3>
-          <div className="space-y-8">
-            <div>
-              <div className="flex justify-between text-sm font-bold mb-2">
-                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500"/> Python (Pandas/BS4)</span>
-                <span>Advanced</span>
-              </div>
-              <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div className="bg-blue-500 h-full w-[90%]" /></div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm font-bold mb-2">
-                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500"/> T-SQL & Power BI</span>
-                <span>Advanced</span>
-              </div>
-              <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div className="bg-emerald-500 h-full w-[85%]" /></div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm font-bold mb-2">
-                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-purple-500"/> Bash & WSL/Ubuntu</span>
-                <span>Intermediate</span>
-              </div>
-              <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div className="bg-purple-500 h-full w-[75%]" /></div>
-            </div>
+        <div className="p-8 bg-slate-100 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 flex flex-col h-fit sticky top-24">
+          <h3 className="font-bold mb-2 text-center text-lg">Core Technical Proficiency</h3>
+          <p className="text-xs text-center text-slate-500 mb-6 uppercase tracking-widest font-bold">Select a skill to filter</p>
+          <div className="flex flex-wrap gap-2 justify-center">
+            {filterSkills.map(skill => (
+              <button
+                key={skill}
+                onClick={() => setActiveSkill(skill)}
+                className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all duration-300 border ${
+                  activeSkill === skill 
+                    ? 'bg-[var(--dynamic-accent)] text-white border-[var(--dynamic-accent)] shadow-md transform scale-105' 
+                    : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)]'
+                }`}
+              >
+                {skill}
+              </button>
+            ))}
           </div>
         </div>
         
         <div className="xl:col-span-2 space-y-4">
-          <h3 className="font-bold px-2 flex items-center gap-2">
-            <Database size={18} className="text-[var(--dynamic-accent)]" />
-            Applied Data Projects {(error || repos.length === 0) ? '(Fallback Mode)' : '(Live from GitHub)'}
+          <h3 className="font-bold px-2 flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <Database size={18} className="text-[var(--dynamic-accent)]" />
+              Applied Data Projects
+            </span>
+            <span className="text-xs text-slate-500 font-mono">Showing: {filteredProjects.length}</span>
           </h3>
+          
           <div className="grid grid-cols-1 gap-4">
-            {dataProjects.map((project, i) => (
-              <div key={i} className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-bold text-lg capitalize">{project.title}</h4>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{project.description}</p>
-                </div>
-                <div className="flex flex-row md:flex-col items-center md:items-end gap-2 md:gap-1 min-w-[120px]">
-                  <span className="text-xs font-mono font-bold text-[var(--dynamic-accent)] bg-[var(--dynamic-accent)]/10 px-3 py-1 rounded-lg">
-                    {project.tool}
-                  </span>
-                  <div className="flex items-center gap-2 mt-2 md:mt-0">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-lg ${project.status === 'Active' ? 'text-emerald-500 bg-emerald-500/10' : 'text-orange-500 bg-orange-500/10'}`}>
-                      {project.status}
-                    </span>
-                    <a href={project.link} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-[var(--dynamic-accent)] transition-colors">
-                      <ExternalLink size={16} />
-                    </a>
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project) => (
+                <motion.div 
+                  key={project.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4 group"
+                >
+                  <div className="flex-1">
+                    <h4 className="font-bold text-lg capitalize group-hover:text-[var(--dynamic-accent)] transition-colors">{project.title}</h4>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 mb-3">{project.description}</p>
+                    
+                    {project.tags && project.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {project.tags.slice(0, 4).map(tag => (
+                          <span key={tag} className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded">
+                            {tag.replace('-', ' ')}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
-            ))}
+                  <div className="flex flex-row md:flex-col items-center md:items-end gap-2 md:gap-1 min-w-[120px]">
+                    <span className="text-xs font-mono font-bold text-[var(--dynamic-accent)] bg-[var(--dynamic-accent)]/10 px-3 py-1 rounded-lg">
+                      {project.tool}
+                    </span>
+                    <div className="flex items-center gap-2 mt-2 md:mt-0">
+                      <span className={`text-xs font-bold px-3 py-1 rounded-lg ${project.status === 'Active' ? 'text-emerald-500 bg-emerald-500/10' : 'text-orange-500 bg-orange-500/10'}`}>
+                        {project.status}
+                      </span>
+                      <a href={project.link} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-[var(--dynamic-accent)] transition-colors">
+                        <ExternalLink size={16} />
+                      </a>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            {filteredProjects.length === 0 && (
+              <motion.div 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                className="p-10 text-center text-slate-500 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800"
+              >
+                No public projects match this exact skill tag yet. Try selecting "All".
+              </motion.div>
+            )}
           </div>
         </div>
       </div>
@@ -409,10 +462,19 @@ const Analytics = () => {
 const SoftwareEngineering = () => {
   const portfolioProjects = [
     {
+      title: 'Human-Like Telegram Automation Bot',
+      client: 'Independent Project',
+      category: 'Social Media Automation',
+      description: 'Engineered an automated Telegram bot capable of dynamic, context-aware chat replies and image distribution. Designed to mimic human interaction logic and completely bypass templated-response fatigue.',
+      tech: ['Python', 'Telegram API', 'Automation', 'Scripting'],
+      metric: '24/7 Autonomy',
+      link: 'https://github.com/Ayoleyi-dev'
+    },
+    {
       title: 'ULLSSA Tech Symposium Platform',
       client: 'UNILAG Departmental Initiative',
-      category: 'Full-Stack Architecture',
-      description: 'Engineered an interactive registration portal handling 500+ concurrent users with React and Framer Motion.',
+      category: 'Full-Stack Web Development',
+      description: 'Engineered an interactive registration portal handling 500+ concurrent users utilizing modern React architecture and Framer Motion for UI fluidity.',
       tech: ['React', 'Framer Motion', 'Vite'],
       metric: '500+ Users',
       link: 'https://github.com/Ayoleyi-dev'
@@ -421,19 +483,10 @@ const SoftwareEngineering = () => {
       title: 'High-Performance E-Commerce Engine',
       client: 'Lagos Retail Partner',
       category: 'Frontend Optimization',
-      description: 'Built a zero-dependency storefront with vanilla JS, reducing page load by 40% and improving mobile conversion.',
+      description: 'Built a zero-dependency storefront with vanilla JS, reducing page load by 40% and drastically improving mobile conversion rates.',
       tech: ['HTML5', 'Vanilla JS', 'CSS3'],
       metric: '+25% Sales',
       link: 'https://github.com/Ayoleyi-dev'
-    },
-    {
-      title: 'This Digital Research Lab',
-      client: 'Personal Project',
-      category: 'React Architecture',
-      description: 'Built a dynamic portfolio system with real-time GitHub API integration, dark mode, and responsive design.',
-      tech: ['React', 'Tailwind', 'GitHub API'],
-      metric: '190+ Commits',
-      link: 'https://github.com/Ayoleyi-dev/Ayoleyi-s-digital-architecture-hub'
     }
   ];
 
@@ -443,9 +496,9 @@ const SoftwareEngineering = () => {
         <div>
           <h2 className="text-2xl font-black mb-1 flex items-center gap-2">
             <Code className="text-[var(--dynamic-accent)]" size={24} /> 
-            Software Engineering
+            Software Engineering & Automation
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 font-medium">Robust digital architecture and frontend systems engineering.</p>
+          <p className="text-slate-600 dark:text-slate-400 font-medium">Robust digital web architecture and programmatic automation scripts.</p>
         </div>
       </div>
 
@@ -453,18 +506,18 @@ const SoftwareEngineering = () => {
         <div className="space-y-4">
           <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors group">
             <Globe className="text-[var(--dynamic-accent)] mb-3" size={24} />
-            <h3 className="font-bold text-lg mb-1">Vanilla Web Architecture</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">High-performance, zero-dependency websites built for maximum speed and SEO optimization.</p>
+            <h3 className="font-bold text-lg mb-1">Web Development</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">High-performance React and Vanilla JS web applications built for maximum speed, responsiveness, and SEO optimization.</p>
           </div>
           <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors group">
-            <TrendingUp className="text-[var(--dynamic-accent)] mb-3" size={24} />
+            <MessageCircle className="text-[var(--dynamic-accent)] mb-3" size={24} />
+            <h3 className="font-bold text-lg mb-1">Social Media Automation</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Programmatic bot development for platforms like Telegram, capable of dynamic human-like chat replies and automated media distribution.</p>
+          </div>
+          <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors group">
+            <Terminal className="text-[var(--dynamic-accent)] mb-3" size={24} />
             <h3 className="font-bold text-lg mb-1">API Integration</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Seamless connection of frontend interfaces with RESTful APIs and external data ecosystems.</p>
-          </div>
-          <div className="p-6 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[var(--dynamic-accent)] transition-colors group">
-            <Smartphone className="text-[var(--dynamic-accent)] mb-3" size={24} />
-            <h3 className="font-bold text-lg mb-1">Responsive UI/UX</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Mobile-first interface design ensuring perfect functionality across all devices and screen sizes.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Seamless connection of frontend interfaces and backend scripts with RESTful APIs, webhooks, and external data ecosystems.</p>
           </div>
         </div>
 
@@ -493,7 +546,7 @@ const SoftwareEngineering = () => {
                         <ExternalLink size={14} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity hover:text-[var(--dynamic-accent)] cursor-pointer" />
                       </a>
                     </div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{project.client} • {project.category}</p>
+                    <p className="text-xs font-bold text-[var(--dynamic-accent)] uppercase tracking-wider mb-3">{project.client} • <span className="text-slate-400">{project.category}</span></p>
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">{project.description}</p>
                     
                     <div className="flex flex-wrap gap-2">
@@ -568,9 +621,9 @@ export default function App() {
 
   const navItems = [
     { id: 'profile', label: 'Identity & Skills', icon: User },
-    { id: 'biolab', label: 'Bioinformatics Lab', icon: Beaker },
-    { id: 'analytics', label: 'Data Analytics', icon: LayoutDashboard },
-    { id: 'webdev', label: 'Software Engineering', icon: Code },
+    { id: 'biolab', label: 'Research Lab', icon: Beaker },
+    { id: 'analytics', label: 'Data Portfolio', icon: LayoutDashboard },
+    { id: 'webdev', label: 'Software Eng', icon: Code },
     { id: 'contact', label: 'Contact', icon: Mail },
   ];
 
@@ -582,10 +635,16 @@ export default function App() {
       <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-slate-300 dark:border-slate-800 p-4 md:p-6 flex flex-col justify-between backdrop-blur-xl z-50 shadow-xl sticky top-0 bg-slate-50/95 dark:bg-slate-950/95 md:bg-transparent">
         <div className="w-full">
           
-          <div className="flex justify-between items-center md:block mb-2 md:mb-10">
-            <div>
-              <h1 className="text-xl md:text-2xl font-black tracking-tight bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-500 bg-clip-text text-transparent">Portfolio Engine</h1>
-              <span className="hidden md:block text-xs font-mono text-slate-500 mt-1">v1.2.0 Scientific</span>
+          <div className="flex justify-between items-center md:block mb-6 md:mb-10">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[var(--dynamic-accent)]">
+                {/* User's uploaded picture */}
+                <img src="/ayoleyi.jpg" alt="Ayoleyi Gbenga-Ayodeji Marvelous" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <h1 className="text-xl md:text-2xl font-black tracking-tight leading-none bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-500 bg-clip-text text-transparent">Ayoleyi</h1>
+                <span className="text-[10px] font-mono font-bold text-slate-500 mt-1 uppercase tracking-wider block">v1.2.0 • Online</span>
+              </div>
             </div>
             
             <button
@@ -619,7 +678,6 @@ export default function App() {
             </nav>
             <div className="absolute top-0 right-0 bottom-2 w-12 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent pointer-events-none md:hidden" />
           </div>
-          
         </div>
 
         <div className="hidden md:block space-y-6 pt-6 border-t border-slate-300 dark:border-slate-800 mt-4">
