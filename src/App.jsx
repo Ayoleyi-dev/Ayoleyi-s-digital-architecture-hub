@@ -671,7 +671,7 @@ export default function App() {
           <div className="flex justify-between items-center md:block mb-6 md:mb-10">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[var(--dynamic-accent)]">
-                <img src="/ayoleyi.jpg" alt="Ayoleyi Gbenga-Ayodeji Marvelous" className="w-full h-full object-cover" />
+               <img src="/ayoleyi.png" alt="Ayoleyi Gbenga-Ayodeji Marvelous" className="w-full h-full object-cover" />
               </div>
               <div>
                 <h1 className="text-xl md:text-2xl font-black tracking-tight leading-none bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-500 bg-clip-text text-transparent">Ayoleyi</h1>
